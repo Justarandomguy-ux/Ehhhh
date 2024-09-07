@@ -1,0 +1,366 @@
+-- MADE BY DEVIN
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Hardcoded key
+local validKey = "Manualkeysystem" -- Replace this with your actual key
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game.CoreGui
+
+-- Create Frame (Background)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 400, 0, 250)
+frame.Position = UDim2.new(0.5, -200, 0.5, -125)
+frame.BackgroundColor3 = Color3.fromRGB(54, 54, 54)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+-- Add UI Corner (rounded corners)
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 10)
+uiCorner.Parent = frame
+
+-- Create Title Label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, 0, 0.2, 0)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "[Vg_ducky hub] Your Certified gay"-- Put your script hub name here
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 24
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Parent = frame
+
+-- Create TextBox (Key Input)
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+keyBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+keyBox.PlaceholderText = "Insert Key Here"
+keyBox.Font = Enum.Font.Gotham
+keyBox.TextSize = 18
+keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+keyBox.BackgroundColor3 = Color3.fromRGB(44, 44, 44)
+keyBox.BorderSizePixel = 0
+keyBox.Parent = frame
+
+-- Add UI Corner to the TextBox
+local uiCornerTextBox = Instance.new("UICorner")
+uiCornerTextBox.CornerRadius = UDim.new(0, 5)
+uiCornerTextBox.Parent = keyBox
+
+-- Create Button (Get Key)
+local getKeyButton = Instance.new("TextButton")
+getKeyButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+getKeyButton.Position = UDim2.new(0.1, 0, 0.55, 0)
+getKeyButton.Text = "Get Key"
+getKeyButton.Font = Enum.Font.GothamBold
+getKeyButton.TextSize = 18
+getKeyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+getKeyButton.BackgroundColor3 = Color3.fromRGB(0, 122, 204)
+getKeyButton.BorderSizePixel = 0
+getKeyButton.Parent = frame
+
+-- Add UI Corner to the Get Key Button
+local uiCornerGetKey = Instance.new("UICorner")
+uiCornerGetKey.CornerRadius = UDim.new(0, 5)
+uiCornerGetKey.Parent = getKeyButton
+
+-- Create Button (Check Key)
+local checkButton = Instance.new("TextButton")
+checkButton.Size = UDim2.new(0.8, 0, 0.15, 0)
+checkButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+checkButton.Text = "Check Key"
+checkButton.Font = Enum.Font.GothamBold
+checkButton.TextSize = 18
+checkButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+checkButton.BackgroundColor3 = Color3.fromRGB(0, 122, 204)
+checkButton.BorderSizePixel = 0
+checkButton.Parent = frame
+
+-- Add UI Corner to the Check Key Button
+local uiCornerCheckKey = Instance.new("UICorner")
+uiCornerCheckKey.CornerRadius = UDim.new(0, 5)
+uiCornerCheckKey.Parent = checkButton
+
+-- Function to make the frame draggable
+local function makeDraggable(gui)
+    local dragInput, dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragInput = input
+            dragStart = input.Position
+            startPos = gui.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragInput = nil
+                end
+            end)
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput then
+            update(input)
+        end
+    end)
+end
+
+-- Make the main frame draggable
+makeDraggable(frame)
+
+-- Function to move and shrink the frame
+local function vanishAndShrink(callback)
+    -- Move the frame to the center
+    local moveTween = TweenService:Create(frame, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -50, 0.5, -50)})
+    moveTween:Play()
+    
+    -- Fade out the text
+    local fadeOutTween = TweenService:Create(titleLabel, TweenInfo.new(0.5), {TextTransparency = 1})
+    fadeOutTween:Play()
+    local fadeOutTextBox = TweenService:Create(keyBox, TweenInfo.new(0.5), {TextTransparency = 1})
+    fadeOutTextBox:Play()
+    local fadeOutButton = TweenService:Create(checkButton, TweenInfo.new(0.5), {TextTransparency = 1})
+    fadeOutButton:Play()
+    local fadeOutGetKeyButton = TweenService:Create(getKeyButton, TweenInfo.new(0.5), {TextTransparency = 1})
+    fadeOutGetKeyButton:Play()
+    
+    -- Wait until the move and fade-out are complete
+    moveTween.Completed:Connect(function()
+        -- Shrink the frame
+        local shrinkTween = TweenService:Create(frame, TweenInfo.new(0.5), {Size = UDim2.new(0, 0, 0, 0)})
+        shrinkTween:Play()
+        shrinkTween.Completed:Connect(function()
+            -- Execute the callback function after shrinking
+            if callback then
+                callback()
+            end
+        end)
+    end)
+end
+
+-- Function to handle the key check
+checkButton.MouseButton1Click:Connect(function()
+    local key = keyBox.Text
+    
+    if key == validKey then
+        -- Vanish and shrink the frame, then execute the script
+        vanishAndShrink(function()
+
+-- Load OrionLib
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+
+-- Create the main GUI window
+local Window = OrionLib:MakeWindow({
+    Name = "Merge for diamond (made by ducky)",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "CatPiece"
+})
+
+-- Create the "Main" tab
+local Tab1 = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Create the "Commands" tab
+local Tab2 = Window:MakeTab({
+    Name = "Commands",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Create the "Command List" tab
+local CommandListTab = Window:MakeTab({
+    Name = "Command List",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Add the list of commands to the "Command List" tab
+CommandListTab:AddLabel("!addcoins [amount] - Adds the specified amount of coins.")
+CommandListTab:AddLabel("!addgems [amount] - Adds the specified amount of gems.")
+CommandListTab:AddLabel("!rainblocks [amount] - Rains the specified number of blocks.")
+CommandListTab:AddLabel("!rebirthloop - Starts the rebirth loop.")
+CommandListTab:AddLabel("!stoprebirthloop - Stops the rebirth loop.")
+
+-- Section for admin commands
+local Section = Tab2:AddSection({
+    Name = "Admin Commands"
+})
+
+-- Variables to control the loop
+local rebirthLoop = false
+
+-- Function to stop the rebirth loop
+local function stopRebirthLoop()
+    rebirthLoop = false
+end
+
+-- Button for adding coins
+Tab2:AddTextbox({
+    Name = "Add Coins",
+    Default = "1000000",
+    TextDisappear = true,
+    Callback = function(value)
+        local amount = tonumber(value)
+        if amount then
+            local args = { "Cash", amount }
+            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("AddRewardEvent"):FireServer(unpack(args))
+        else
+            warn("Invalid amount for coins.")
+        end
+    end
+})
+
+-- Button for adding gems
+Tab2:AddTextbox({
+    Name = "Add Gems",
+    Default = "1000",
+    TextDisappear = true,
+    Callback = function(value)
+        local amount = tonumber(value)
+        if amount then
+            local args = { "Gems", amount }
+            game:GetService("ReplicatedStorage").Remotes.AddRewardEvent:FireServer(unpack(args))
+        else
+            warn("Invalid amount for gems.")
+        end
+    end
+})
+
+-- Button for buying a potion
+Tab2:AddButton({
+    Name = "Buy Potion",
+    Callback = function()
+        local args = { "Potion", 1 }
+        game:GetService("ReplicatedStorage").Remotes.BuyPotionEvent:FireServer(unpack(args))
+    end
+})
+
+-- Button for starting rebirth loop
+Tab2:AddButton({
+    Name = "Start Rebirth Loop",
+    Callback = function()
+        rebirthLoop = true
+        while rebirthLoop do
+            local args = { 0, 0, 0 }
+            game:GetService("ReplicatedStorage").Remotes.RebirthConfirmEvent:FireServer(unpack(args))
+            wait(1) -- Adjust the delay as needed
+        end
+    end
+})
+
+-- Button for stopping rebirth loop
+Tab2:AddButton({
+    Name = "Stop Rebirth Loop",
+    Callback = function()
+        stopRebirthLoop()
+    end
+})
+
+-- Button for upgrading a specific level
+Tab2:AddTextbox({
+    Name = "Upgrade Level",
+    Default = "47",
+    TextDisappear = true,
+    Callback = function(value)
+        local level = tonumber(value)
+        if level then
+            local args = { "Upgrade", level, 0 }
+            game:GetService("ReplicatedStorage").Remotes.UpgradeEvent:FireServer(unpack(args))
+        else
+            warn("Invalid level for upgrade.")
+        end
+    end
+})
+
+-- Button for raining blocks
+Tab2:AddTextbox({
+    Name = "Rain Blocks",
+    Default = "10",
+    TextDisappear = true,
+    Callback = function(value)
+        local count = tonumber(value)
+        if count then
+            for i = 1, count do
+                game:GetService("ReplicatedStorage").Remotes.RainEvent:FireServer()
+            end
+        else
+            warn("Invalid number of blocks to rain.")
+        end
+    end
+})
+
+-- Add labels in the "Main" tab
+Tab1:AddLabel("Made by VG ducky")
+Tab1:AddLabel("Update soon")
+
+OrionLib:Init()
+
+-- Command Processing for Chat
+local function handleChatCommand(player, msg)
+    local prefix = "!"
+    local args = string.split(msg, " ")
+    local command = args[1]
+    local value = tonumber(args[2])
+
+    if command:sub(1, #prefix) == prefix then
+        command = command:sub(#prefix + 1) -- Remove the prefix
+    end
+
+    if command == "addcoins" then
+        local amount = value or 1000000
+        game:GetService("ReplicatedStorage").Remotes.AddRewardEvent:FireServer("Cash", amount)
+    elseif command == "addgems" then
+        local amount = value or 1000
+        game:GetService("ReplicatedStorage").Remotes.AddRewardEvent:FireServer("Gems", amount)
+    elseif command == "rainblocks" then
+        local count = value or 10
+        for i = 1, count do
+            game:GetService("ReplicatedStorage").Remotes.RainEvent:FireServer()
+        end
+    elseif command == "rebirthloop" then
+        rebirthLoop = true
+        while rebirthLoop do
+            game:GetService("ReplicatedStorage").Remotes.RebirthConfirmEvent:FireServer(0, 0, 0)
+            wait(1)
+        end
+    elseif command == "stoprebirthloop" then
+        stopRebirthLoop()
+    else
+        warn("Unknown command: " .. command)
+    end
+end
+
+-- Connect to the PlayerAdded event
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(msg)
+        pcall(function() handleChatCommand(player, msg) end)
+    end)
+end)
+
+OrionLib:Init()
+
+            -- Execute your script here
+            -- Add your script or function call here
+        end)
+    else
+        
+    end
+end)
+
+-- Function to open the key link (Optional)
+getKeyButton.MouseButton1Click:Connect(function()
+    setclipboard("https://link-hub.net/1199439/key-system-1") -- Update as needed
+        end)
